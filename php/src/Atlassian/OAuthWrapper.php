@@ -66,18 +66,19 @@ class OAuthWrapper {
 		} else {
 			$this->client = new Client($this->baseUrl);
 
+			$privateKey = $this->privateKey;
 			$this->oauthPlugin = new OauthPlugin(array(
 				'consumer_key' 		=> $this->consumerKey,
 				'consumer_secret' 	=> $this->consumerSecret,
 				'token' 			=> !$token ? $this->tokens['oauth_token'] : $token,
 				'token_secret' 		=> !$token ? $this->tokens['oauth_token_secret'] : $tokenSecret,
 	            'signature_method' => 'RSA-SHA1',
-	            'signature_callback' => function($stringToSign, $key) {
-					if (!file_exists($this->privateKey)) {
-						throw new \InvalidArgumentException("Private key {$this->privateKey} does not exist");
+	            'signature_callback' => function($stringToSign, $key) use ($privateKey) {
+					if (!file_exists($privateKey)) {
+						throw new \InvalidArgumentException("Private key {$privateKey} does not exist");
 					}
 
-					$certificate = openssl_pkey_get_private('file://' . $this->privateKey);
+					$certificate = openssl_pkey_get_private('file://' . $privateKey);
 
 					$privateKeyId = openssl_get_privatekey($certificate);
 
