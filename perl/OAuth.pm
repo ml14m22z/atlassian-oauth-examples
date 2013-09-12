@@ -513,6 +513,9 @@ sub save_access_token_crypt_to_file {
   
   close(STASH_OAUTH_FILE);
   
+  # Set file permsions to user read/write and no other access
+  chmod(0600, $file);
+  
   return 1;
 }
 
